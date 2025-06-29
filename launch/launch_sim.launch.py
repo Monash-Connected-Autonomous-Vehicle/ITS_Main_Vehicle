@@ -22,7 +22,7 @@ def generate_launch_description():
         [
             FindPackageShare(package_name),
             'config',
-            'diff_drive_controller.yaml',
+            'my_controllers.yaml',
         ]
     )
 
