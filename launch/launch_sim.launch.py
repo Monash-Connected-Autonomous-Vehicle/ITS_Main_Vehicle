@@ -1,98 +1,107 @@
 import os
-
 from ament_index_python.packages import get_package_share_directory
-
-
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-
+from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
+from launch.event_handlers import OnProcessExit
 from launch_ros.actions import Node
-
-
+from launch_ros.parameter_descriptions import ParameterValue
+from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
 
+    
 
-    # Include the robot_state_publisher launch file, provided by our own package. Force sim time to be enabled
-    # !!! MAKE SURE YOU SET THE PACKAGE NAME CORRECTLY !!!
+    # Define the input parameters
+    use_sim_time     = LaunchConfiguration('use_sim_time', default='true')
+    package_name = 'its_main_vehicle'
 
-    package_name='articubot_one' #<--- CHANGE ME
+    # ROS Controller Files:
+    robot_controllers = PathJoinSubstitution(
+        [
+            FindPackageShare(package_name),
+            'config',
+            'diff_drive_controller.yaml',
+        ]
+    )
 
+    # Launch robot_state_publisher
     rsp = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(package_name),'launch','rsp.launch.py'
-                )]), launch_arguments={'use_sim_time': 'true', 'use_ros2_control': 'true'}.items()
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory(package_name), 'launch', 'rsp.launch.py')
+        ),
+        launch_arguments={
+            'use_sim_time': 'true',
+            'use_ros2_control': 'true'
+        }.items()
     )
 
-    joystick = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(package_name),'launch','joystick.launch.py'
-                )]), launch_arguments={'use_sim_time': 'true'}.items()
+    # --- 2) Launch Ignition sim server + client ---
+    ign_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+          os.path.join(
+            get_package_share_directory('ros_gz_sim'),
+            'launch', 'gz_sim.launch.py'
+          )
+        ),
+        launch_arguments={
+          'ign_args': '-r empty.sdf',  # or your .sdf world
+          'verbose': 'true'
+        }.items()
+    )
+    
+    
+    # --- 4) Spawn the robot_description into Ignition ---
+    spawn_entity = Node(
+        package="ros_gz_sim",
+        executable="create",
+        output="screen",
+        arguments=[
+            "-name",  "my_robot_1",
+            "-topic", "robot_description",
+            "-allow_renaming", "true",
+            "--ros-args",
+        ],
+        parameters=[{"use_sim_time": use_sim_time}],
     )
 
-    twist_mux_params = os.path.join(get_package_share_directory(package_name),'config','twist_mux.yaml')
-    twist_mux = Node(
-            package="twist_mux",
-            executable="twist_mux",
-            parameters=[twist_mux_params, {'use_sim_time': True}],
-            remappings=[('/cmd_vel_out','/diff_cont/cmd_vel_unstamped')]
-        )
-
-    gazebo_params_file = os.path.join(get_package_share_directory(package_name),'config','gazebo_params.yaml')
-
-    # Include the Gazebo launch file, provided by the gazebo_ros package
-    gazebo = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory('gazebo_ros'), 'launch', 'gazebo.launch.py')]),
-                    launch_arguments={'extra_gazebo_args': '--ros-args --params-file ' + gazebo_params_file}.items()
-             )
-
-    # Run the spawner node from the gazebo_ros package. The entity name doesn't really matter if you only have a single robot.
-    spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',
-                        arguments=['-topic', 'robot_description',
-                                   '-entity', 'my_bot'],
-                        output='screen')
-
-
-    diff_drive_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["diff_cont"],
-    )
-
+    # --- 5) Load and start your controllers ---
+    # Controller manager spawners
     joint_broad_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_broad"],
+        arguments=["joint_state_broadcaster"],
+        output='screen'
     )
 
+    diff_drive_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            'diff_drive_base_controller',
+            '--param-file', robot_controllers,
+            #'--ros-args', '-r', '/diff_drive_base_controller/cmd_vel:=/cmd_vel'
+        ],
+        output='screen'
+    )
 
-    # Code for delaying a node (I haven't tested how effective it is)
-    # 
-    # First add the below lines to imports
-    # from launch.actions import RegisterEventHandler
-    # from launch.event_handlers import OnProcessExit
-    #
-    # Then add the following below the current diff_drive_spawner
-    # delayed_diff_drive_spawner = RegisterEventHandler(
-    #     event_handler=OnProcessExit(
-    #         target_action=spawn_entity,
-    #         on_exit=[diff_drive_spawner],
-    #     )
-    # )
-    #
-    # Replace the diff_drive_spawner in the final return with delayed_diff_drive_spawner
-
-
-
-    # Launch them all!
+    # --- 6) Set up the Ros Gazebo Bridge ---
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+                   '/camera/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo'],
+        output='screen'
+    )
+    
     return LaunchDescription([
-        rsp,
-        joystick,
-        twist_mux,
-        gazebo,
-        spawn_entity,
-        diff_drive_spawner,
-        joint_broad_spawner
+      DeclareLaunchArgument('use_sim_time',    default_value='true'),
+      DeclareLaunchArgument('use_ros2_control',default_value='true'),
+      rsp,
+      bridge,
+      ign_launch,
+      spawn_entity,
+      joint_broad_spawner,
+      diff_drive_spawner,
     ])
