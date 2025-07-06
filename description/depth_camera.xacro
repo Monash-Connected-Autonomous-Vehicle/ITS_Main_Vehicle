@@ -4,13 +4,13 @@
     <joint name="camera_joint" type="fixed">
         <parent link="chassis"/>
         <child link="camera_link"/>
-        <origin xyz="0.305 0 0.08" rpy="0 0 0"/>
+        <origin xyz="0.305 0 0.151" rpy="0 0 0"/>
     </joint>
 
     <link name="camera_link">
         <visual>
             <geometry>
-                <box size="0.010 0.03 0.03"/>
+                <box size="0.020 0.09 0.03"/>
             </geometry>
             <material name="red"/>
         </visual>
@@ -20,7 +20,7 @@
     <joint name="camera_optical_joint" type="fixed">
         <parent link="camera_link"/>
         <child link="camera_link_optical"/>
-        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
 
     <link name="camera_link_optical"></link>
@@ -30,7 +30,56 @@
     <gazebo reference="camera_link">
         <material>Gazebo/Red</material>
 
-        <sensor name="camera" type="depth">
+        <sensor name="head_camera_depth" type="depth_camera">
+            <ignition_frame_id>camera_link_optical</ignition_frame_id>
+            <always_on>1</always_on>
+            <update_rate>10</update_rate>
+            <visualize>1</visualize>
+            <topic>/head_camera/depth</topic>
+            <pose relative_to='camera_link_optical'>0 0.0175 0.5125 0 -0 0</pose>
+            <camera name="d435">
+                <horizontal_fov>1.48702</horizontal_fov>
+                <image>
+                    <width>1280</width>
+                    <height>720</height>
+                </image>
+                <clip>
+                    <near>0.1</near>
+                    <far>10</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0</mean>
+                    <stddev>0.1</stddev>
+                </noise>
+            </camera>
+        </sensor>
+
+        <sensor name="d435_color" type="camera">
+            <always_on>1</always_on>
+            <update_rate>30</update_rate>
+            <visualize>1</visualize>
+            <pose relative_to='camera_link_optical'>0 0.0175 0.5125 0 -0 0</pose>
+            <topic>/head_camera/images</topic>
+            <camera name="d435">
+                <horizontal_fov>1.21126</horizontal_fov>
+                <image>
+                    <width>640</width>
+                    <height>480</height>
+                    <format>RGB_INT8</format>
+                </image>
+                <clip>
+                    <near>0.1</near>
+                    <far>100</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0</mean>
+                    <stddev>0.007</stddev>
+                </noise>
+            </camera>
+	    </sensor>
+        <!--<sensor name="camera" type="depth">
             <pose> 0 0 0 0 0 0 </pose>
             <visualize>true</visualize>
             <update_rate>10</update_rate>
@@ -51,7 +100,7 @@
                 <min_depth>0.1</min_depth>
                 <max_depth>100.0</max_depth>
             </plugin>
-        </sensor>
+        </sensor> -->
     </gazebo>
 
 </robot>

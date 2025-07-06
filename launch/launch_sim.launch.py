@@ -9,9 +9,7 @@ from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
-def generate_launch_description():
-
-    
+def generate_launch_description():    
 
     # Define the input parameters
     use_sim_time     = LaunchConfiguration('use_sim_time', default='true')
@@ -22,7 +20,7 @@ def generate_launch_description():
         [
             FindPackageShare(package_name),
             'config',
-            'my_controllers.yaml',
+            'my_controllers_4wd.yaml',
         ]
     )
 
@@ -46,8 +44,8 @@ def generate_launch_description():
           )
         ),
         launch_arguments={
-          'ign_args': '-r empty.sdf',  # or your .sdf world
-          'verbose': 'true'
+            'ign_args': f'-r {os.path.join(get_package_share_directory(package_name), "worlds", "sim_world.sdf")}',
+            'verbose': 'true'
         }.items()
     )
     
@@ -60,6 +58,7 @@ def generate_launch_description():
         arguments=[
             "-name",  "my_robot_1",
             "-topic", "robot_description",
+            "-z", "0.3",
             "-allow_renaming", "true",
             "--ros-args",
         ],
@@ -90,8 +89,20 @@ def generate_launch_description():
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
-                   '/camera/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo'],
+        name='parameter_bridge',
+        arguments=[
+            '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
+            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+            '/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry',
+            '/cmd_vel@geometry_msgs/msg/Twist[gz.msgs.Twist',
+            '/imu@sensor_msgs/msg/Imu[gz.msgs.IMU',
+            '/joint_states@sensor_msgs/msg/JointState[gz.msgs.Model',
+            '/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
+            '/head_camera/depth@sensor_msgs/msg/Image[gz.msgs.Image',
+            '/head_camera/depth/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked',
+            '/head_camera/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
+            '/head_camera/images@sensor_msgs/msg/Image[gz.msgs.Image'
+        ],
         output='screen'
     )
     
@@ -104,4 +115,5 @@ def generate_launch_description():
       spawn_entity,
       joint_broad_spawner,
       diff_drive_spawner,
+      #lidar_transform,
     ])
