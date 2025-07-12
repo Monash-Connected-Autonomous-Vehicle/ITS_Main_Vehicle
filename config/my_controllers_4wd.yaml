@@ -13,7 +13,7 @@ diff_drive_base_controller:
     left_wheel_names: ["left_front_wheel_joint", "left_back_wheel_joint"]
     right_wheel_names: ["right_front_wheel_joint", "right_back_wheel_joint"]
 
-    wheel_separation: 0.291
+    wheel_separation: 0.297
     wheels_per_side: 2  # actually 2, but both are controlled by 1 signal
     wheel_radius: 0.033
 
