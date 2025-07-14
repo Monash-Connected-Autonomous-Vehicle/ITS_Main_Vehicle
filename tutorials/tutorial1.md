@@ -246,7 +246,7 @@ cd ..
 
 4. Now source and visualize your package.
 ```
-source install.setup.bash
+source install/setup.bash
 ```
 ```
 ros2 pkg list
