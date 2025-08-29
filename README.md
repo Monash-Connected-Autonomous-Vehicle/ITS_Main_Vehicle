@@ -23,7 +23,8 @@ This is a GitHub template made for the ITS Main Vehicle. You can make your own c
 
 4. Follow the guide below to install Nav2:
 
-**NAV2**: https://docs.nav2.org/getting_started/index.html
+**NAV2**: https://docs.nav2.org/getting_started/index.html  
+Note: We're using ROS2 humble distribution so when installing make sure use the command under "***Iron and older***"
 
 ### 0.3. Other Packages You May Need
 
@@ -35,13 +36,26 @@ sudo apt install ros-humble-gz-ros2-control ros-humble-gz-ros2-control-demos
 ```
 
 
-
 ## 1. Simulation
-### 1.1. Launch Simulation 
+### 1.1. Source ROS2 setup file
+You need to run this command everytime you open up a new terminal 
+```
+source /opt/ros/humble/setup.bash
+```
+Note: The common trick is copy this command to your ~/.bashrc file. 
+
+### 1.2. Build and Source the package  
+
+```
+colcon build
+source install/setup.bash
+```
+
+### 1.3. Launch Simulation 
 ```
 ros2 launch its_main_vehicle launch_sim.launch.py 
 ```
-### 1.2. Manual Control
+### 1.4. Manual Control
 ```
 ros2 run teleop_twist_keyboard teleop_twist_keyboard \
   --ros-args -r /cmd_vel:=/diff_drive_base_controller/cmd_vel_unstamped

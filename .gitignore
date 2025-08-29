@@ -1,1 +1,4 @@
 legacy
+log/
+build/
+install/

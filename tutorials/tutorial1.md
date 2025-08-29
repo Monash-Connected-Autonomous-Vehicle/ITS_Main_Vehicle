@@ -1,7 +1,8 @@
-## Tutorial 1: Getting Started
+## Tutorial 1: Getting Started  
+**Note:** Make sure you have all the pre-requisite packages from [here](https://github.com/Monash-Connected-Autonomous-Vehicle/ITS_Main_Vehicle/blob/main/README.md).  
 ### Part 1: Launch Your First Robot
 
-**Duration:** 15 minutes
+**Duration:** 15 minutes  
 
 This section provides a brief introduction to what it's like to use ROS 2. We will launch a pre-built software stack using the "turtlebot" platform and demonstrate how the robot performs mapping in a simulation environment.
 
@@ -30,7 +31,7 @@ Once you finish this, please do not close anything. Drive the robot around and w
 #### 2.1. Introduction
 **2.1.1. RVIZ and Gazebo**
 
-In robotic development, you will face a diverse range of data types, some include robot position frames, 2D lidar arrays, 3d point clouds and many more. 
+In robotic development, you will face a diverse range of data types, some include robot position frames, 2D lidar arrays or camera images, 3D point clouds and many more. 
 
 <p align="center">
   <img src="images/tut1_fig1.png" alt="Figure 1: RVIZ Interface" width="500"/>
@@ -39,13 +40,13 @@ In robotic development, you will face a diverse range of data types, some includ
 
 RViz is a powerful **3D visualization tool** in ROS that allows users to view and interact with complex robotic data in real time. It provides a graphical interface to visualize information such as sensor inputs (e.g., LiDAR, cameras), robot models, maps, and navigation paths. This helps developers and researchers better understand and debug the behavior of their robot systems by making abstract data intuitive and accessible.
 
-**RVIZ vs Gazebo:** You may ask, if we already have RViz, why do we need Gazebo? Well, RViz is primarily a visualization tool—it shows you what the robot perceives, such as sensor data, map information, and planned paths. However, what the robot "sees" doesn't always reflect the actual dynamics of the real world. Gazebo, on the other hand, is a full-featured simulation environment that models the physical world. It can simulate physics, friction, collisions, and sensor noise, providing a more realistic and interactive testing ground for robotic algorithms before deploying them to real hardware.
+**RVIZ vs Gazebo:** You may ask, if we already have RViz, why do we need Gazebo? Well, RViz is primarily a visualization tool—it shows you what the robot perceives, such as sensor data, map information, and planned paths. However, what the robot "sees" may not fully reflect real world dynamics. Gazebo, on the other hand, is a full-featured simulation environment that models the physical world. It can simulate physics, friction, collisions, and sensor noise, providing a more realistic and interactive testing ground for robotic algorithms before deploying them to real hardware.
 
 **2.1.2. SLAM**
 
 **Localization** determines the robot's position $(x, y, \theta)$ within a known map.
 
-**Mapping** constructs a representation of the environment given known poses.
+**Mapping** constructs a representation of the environment given known robot poses.
 
 **SLAM** (Simultaneous Localization and Mapping) aims to estimate both the map $m$ and the robot's trajectory $x_{1:t}$ from sensor data $z_{1:t}$ and control inputs $u_{1:t}$, i.e.,
 
