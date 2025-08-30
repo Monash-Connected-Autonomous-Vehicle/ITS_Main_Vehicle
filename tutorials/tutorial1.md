@@ -281,3 +281,4 @@ ros2 pkg list
 + TODO6: Visualize your topics using `ros2 topic list` and `sqt_graph`
 ```
 Use the reference link to help you: https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html
+Building python scripts with CMAKE: https://docs.ros.org/en/humble/How-To-Guides/Ament-CMake-Python-Documentation.html 
