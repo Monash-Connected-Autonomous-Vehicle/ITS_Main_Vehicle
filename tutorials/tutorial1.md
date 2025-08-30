@@ -22,7 +22,19 @@ Open up a new terminal for the control keys.
 ```
 ros2 run turtlebot3_teleop teleop_keyboard
 ```
-Once you finish this, please do not close anything. Drive the robot around and wait for the others.
+Once you finish this, please do not close anything. Drive the robot around and wait for the others.  
+
+Note: When you first run the above command, it might takes a while to load up gazebo classic and spawn entity, just terminate the process and run again.  
+It should says these after successfully run.
+```
+[spawn_entity.py-4] [INFO] [1756547822.329558688] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-4] [INFO] [1756547822.329964336] [spawn_entity]: Loading entity XML from file /opt/ros/humble/share/turtlebot3_gazebo/models/turtlebot3_waffle/model.sdf
+[spawn_entity.py-4] [INFO] [1756547822.331031508] [spawn_entity]: Waiting for service /spawn_entity, timeout = 30
+[spawn_entity.py-4] [INFO] [1756547822.331387593] [spawn_entity]: Waiting for service /spawn_entity
+[spawn_entity.py-4] [INFO] [1756547823.336670634] [spawn_entity]: Calling service /spawn_entity
+[gzserver-1] [INFO] [1756547823.494621331] [turtlebot3_imu]: <initial_orientation_as_reference> is unset, using default value of false to comply with REP 145 (world as orientation reference)
+[spawn_entity.py-4] [INFO] [1756547823.655437076] [spawn_entity]: Spawn status: SpawnEntity: Successfully spawned entity [waffle]
+```
 
 ### Part 2: RVIZ and SLAM
 
@@ -65,6 +77,7 @@ ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=True
 + TODO1: After you have launched RVIZ, please drive the robot around the Simulated World to create your own map.
 
 + TODO2: Next, press "add" key on the bottom of the left hand panel to add a sensor of your choice.
+Hint: Make sure to select topic under the sensor e.g. /camera/image_raw
 ```
 
 ### Part 3: Ros2 Basics
@@ -75,20 +88,20 @@ ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=True
 
 - ROS (Robot Operating System) is a flexible, modular middleware framework that enables communication, coordination, and control among components in a robotic system.
 - ROS2 is very vauge and does not really relate to robot when first using it.
-- Rather than giving you a cake you can add dressing on, ROS2 feels more like here is a cow, some wheat, go make a cake. 
+- Instead of handing you a ready-made cake that you can simply decorate, ROS 2 is more like being given the raw ingredients: a cow for milk, wheat for flour—and being told to bake the cake yourself. 
 
 #### 3.2. All Components in ROS2
 
 | **ROS2 Concept**       | **Minecraft Analogy**                                                                | **Description**                                                                 |
 |------------------------|---------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| **Node**               | A player                                                         | Performs a specific task like moving, sensing, or reacting.                      |
-| **Topic**              | A redstone signal line or chat channel that allows for communication between players                                            | Used for one-way communication between nodes.                                   |
+| **Node**               | A player                                                         | A node is like an individual unit that performs one role, e.g., moving a robot arm, processing camera data, or planning a path.                      |
+| **Topic**              | A redstone signal line or chat channel that allows for communication between players                                            | A communication channel where information flows in one direction. Multiple players (nodes) can send to or listen from it.                                   |
 | **Publisher**          | Dispenser or redstone clock                                                          | Sends out messages/data on a topic.                                              |
 | **Subscriber**         | Pressure plate or observer block                                                     | Listens for and reacts to messages on a topic.                                   |
 | **Message**            | Item, chat message, or redstone signal                                               | The actual data being passed between nodes.                                     |
 | **Service**            | Command block with `/tp` or `/give`                                                  | Provides a request-response interaction.                                         |
 | **Action**             | A sequence of commands (e.g., finding treasure)                                      | Long-running task that gives feedback and can be cancelled.                     |
-| **Launch File**        | Setup script or command block chain                                                  | Spawns and connects multiple components at once.                                |
+| **Launch File**        | Setup script or command block chain                                                  | A configuration that starts multiple nodes together with the right connections.                                |
 | **TF (Transform)**     | Coordinate system of each player or structure                                        | Tracks positions and orientations relative to each other.                       |
 | **RVIZ**               | Minimap or map mod                                                                   | Visualizes positions, environment layout, and sensor data.                      |
 | **Gazebo**             | Modded Minecraft world with physics (e.g., gravity tweaks, slime blocks)             | Simulates real-world physics and interactions.                                  |
@@ -154,7 +167,12 @@ ros2_ws/
 └── log/           # (autogenerated by `colcon build`)
 
 ```
-
+```diff
++ TODO4: create a work space and source directory.
+mkdir ${name}_ws
+cd ${name}_ws
+mkdir src
+```
 #### 4.3. ROS2 Package Structure:
 
 You can choose to structure your ros2 package in a variety of different ways. Common templates are provided below:
@@ -225,7 +243,7 @@ Please do not be intimidated by the level of complexity above, in this course yo
 
 While different developers have different package preferences, in this tutorial we will be using the template of `python_ament_cmake`, as doing so would allow us to incooporate both `python` and `c` code in the same package. Giving us a bit more diversity and making it more user-friendly for everyone.
 
-1. Please create your own package and assign a package name to your robot. Please make sure you are inside your `src` repository.
+1. Please create your own package and assign a package name to your robot. **Please make sure you are inside your `src` repository.**
 
 ```
 ros2 pkg create [package_name] --build-type ament_cmake --dependencies rclpy
@@ -258,8 +276,8 @@ ros2 pkg list
 **Duration:** 20 minutes
 
 ```diff
-+ TODO4: Can you now try to create a publisher and subscriber of your own please? 
++ TODO5: Can you now try to create a publisher and subscriber of your own please? 
 
-+ TODO5: Visualize your topics using `ros2 topic list`
++ TODO6: Visualize your topics using `ros2 topic list`
 ```
 Use the reference link to help you: https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html

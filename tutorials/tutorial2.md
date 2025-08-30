@@ -248,3 +248,8 @@ ros2 launch [your_package_name] rsp.launch.py
 ```
 ros2 run joint_state_publisher_gui joint_state_publisher_gui
 ```
+
+Note: You can also visual the nodes created from your package by running
+```
+rqt_graph
+```
