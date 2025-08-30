@@ -194,7 +194,7 @@ my_cpp_pkg/
 ```
 You can create this package template using:
 ```
-ros2 pkg create my_cpp_pkg --build-type ament_cmake --dependencies rclcpp
+ros2 pkg create my_cpp_pkg --build-type ament_cmake --license Apache-2.0 --dependencies rclcpp
 ```
 
 **4.3.2. ROS2 Python Package - Python Make**
@@ -215,7 +215,7 @@ my_python_pkg/
 ```
 You can create this package template using:
 ```
-ros2 pkg create my_python_pkg --build-type ament_python --dependencies rclpy
+ros2 pkg create my_python_pkg --build-type ament_python --license Apache-2.0 --dependencies rclpy
 ```
 
 
@@ -234,7 +234,7 @@ my_python_pkg/
 ```
 You can create this package template using:
 ```
-ros2 pkg create my_cmake_python_pkg --build-type ament_cmake --dependencies rclpy
+ros2 pkg create my_cmake_python_pkg --build-type ament_cmake --license Apache-2.0 --dependencies rclpy
 ```
 
 
@@ -246,7 +246,7 @@ While different developers have different package preferences, in this tutorial 
 1. Please create your own package and assign a package name to your robot. **Please make sure you are inside your `src` repository.**
 
 ```
-ros2 pkg create [package_name] --build-type ament_cmake --dependencies rclpy
+ros2 pkg create [package_name] --build-type ament_cmake --license Apache-2.0 --dependencies rclpy
 ```
 
 2. Add a launch folder into your package
@@ -278,6 +278,6 @@ ros2 pkg list
 ```diff
 + TODO5: Can you now try to create a publisher and subscriber of your own please? 
 
-+ TODO6: Visualize your topics using `ros2 topic list`
++ TODO6: Visualize your topics using `ros2 topic list` and `sqt_graph`
 ```
 Use the reference link to help you: https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html
